@@ -37,40 +37,56 @@ int compare_response(car_t *car, char *response)
     return (1);
 }
 
+char **check_lidar(car_t *car)
+{
+    int i = 0;
+    char **check;
+    send_command("GET_INFO_LIDAR\n", car);
+    while (car->salut[i - 2] != 'f' || car->salut[i - 1] != 'a' || car->salut[i] != 'r') {
+        i++;
+    }
+    check = my_str_to_wordtab(car->salut, ':');
+    return (check);
+}
+
+void choose_direction(char **tab, car_t *car)
+{
+    int max = 3000;
+    int way = 16;
+    for (int i = 3; tab[i + 1] != NULL; i++) {
+        if (atof(tab[i]) <= 900 && atof(tab[i]) < max) {
+            max = atof(tab[i]);
+            way = i;
+        }
+    }
+    fprintf(stderr, "%s\n", tab[way]);
+    fprintf(stderr, "%.2f\n", atof(tab[way]));
+    if (way < 8) {
+        send_command("WHEELS_DIR:-0.15\n", car);
+    }
+    if (way >= 9 && way <= 20)
+        send_command("WHEELS_DIR:0\n", car);
+    if (way > 21) {
+        send_command("WHEELS_DIR:0.15\n", car);
+    }
+}
+
 int main(void)
 {
     car_t *car = malloc(sizeof(car_t));
+    char **check;
     if (send_command(START, car) == 84)
         return (84);
     if (send_info(car) == 84)
         return (84);
     while (compare_response(car, "Track Cleared") == 1) {
         send_info(car);
-        send_command("CAR_FORWARD:1\n", car);
+        send_command("CAR_FORWARD:0.5\n", car);
+        check = check_lidar(car);
+        choose_direction(check, car);
     }
     fprintf(stderr, "Track Cleared\n");
     if (send_command(STOP, car) == 84)
         return (84);
-    /*while (1) {
-        if (count == 1) {
-            if (write(1, "START_SIMULATION\n", 18) < 0) {
-                printf("Error xD");
-            }
-            response = get_next_line(0);
-            if (check_response(response) == 0)
-                return (84);
-        }
-        if (write(1, "CAR_FORWARD:0.5\n", 16) < 0) {
-            printf("Error xD");
-        }
-        if (write(1, "CYCLE_WAIT:10\n", 14) < 0) {
-            printf("Error xD");
-        }
-        if (count > 13) {
-            write(1, "CAR_FORWARD:0\n", 16);
-            break;
-        }
-        count++;
-    }*/
     return (0);
 }
