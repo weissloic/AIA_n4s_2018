@@ -8,7 +8,7 @@
 #include "my.h"
 #include "n4s.h"
 
-int send_info(void)
+int send_info(car_t *car)
 {
     char *response = NULL;
 
@@ -16,18 +16,19 @@ int send_info(void)
         return (84);
     response = get_next_line(0);
     fprintf(stderr, "%s\n", response);
-    if (check_response(response) == 0)
+    if (check_response(response, car) == 0)
         return (84);
     return (0);
 }
 
-int send_command(char *str)
+int send_command(char *str, car_t *car)
 {
     char *response = NULL;
 
     if (write(1, str, strlen(str)) < 0)
         return (84);
-    if (check_response(response) == 0)
+    response = get_next_line(0);
+    if (check_response(response, car) == 0)
         return (84);
     return (0);
 }

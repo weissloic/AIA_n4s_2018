@@ -15,26 +15,39 @@
 // Track Cleared a la fin = FIN DE LA COURSE CIAO
 // LES NOMBRES = distance entre les murs et la voiture
 
-int check_response(char *buffer)
+int check_response(char *buffer, car_t *car)
 {
-    char **response;
-
     if (buffer == NULL)
         return (0);
-    response = my_str_to_wordtab(buffer, ':');
-    if (strcmp(response[1], "OK") != 0) {
+    car->response = my_str_to_wordtab(buffer, ':');
+    if (strcmp(car->response[1], "OK") != 0) {
         return (0);
     }
     return (1);
 }
 
+int compare_response(car_t *car, char *response)
+{
+    for (int i = 0; car->response[i] != NULL; i++) {
+        if (strcmp(car->response[i], response) == 0) {
+            send_command(STOP, car);
+            return (0);
+        }
+    }
+    return (1);
+}
 
 int main(void)
 {
-    if (send_command(START) == 84)
+    car_t *car = malloc(sizeof(car_t));
+    if (send_command(START, car) == 84)
         return (84);
-    if (send_info() == 84)
+    if (send_info(car) == 84)
         return (84);
+    while (compare_response(car, "Track Cleared") == 1) {
+        send_info(car);
+        send_command("CAR_FORWARD:1\n", car);
+    }
     /*while (1) {
         if (count == 1) {
             if (write(1, "START_SIMULATION\n", 18) < 0) {

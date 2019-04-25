@@ -14,19 +14,20 @@
 #define START "START_SIMULATION\n"
 #define INFO "GET_INFO_LIDAR\n"
 #define STOP "STOP_SIMULATION\n"
-#define FORWARD(n) "CAR_FORWARD:"n
+#define FORWARD(n) "CAR_FORWARD:"n"\n"
 #define BACKWARD(n) "CAR_BACKWARD:"n
 
 typedef struct s_car {
     float speed;
     float wheels_dir;
+    char **response;
 } car_t;
 
 char *get_next_line(int fd);
 
 // SEND
-int send_command(char *str);
-int send_info(void);
-int check_response(char *buffer);
+int send_command(char *str, car_t *car);
+int send_info(car_t *car);
+int check_response(char *buffer, car_t *car);
  
 #endif /* !BOOTSTRAP_H_ */
