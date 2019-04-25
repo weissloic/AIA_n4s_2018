@@ -15,7 +15,6 @@ int send_info(car_t *car)
     if (write(1, INFO, strlen(INFO)) < 0)
         return (84);
     response = get_next_line(0);
-    fprintf(stderr, "%s\n", response);
     if (check_response(response, car) == 0)
         return (84);
     return (0);

@@ -48,6 +48,9 @@ int main(void)
         send_info(car);
         send_command("CAR_FORWARD:1\n", car);
     }
+    fprintf(stderr, "Track Cleared\n");
+    if (send_command(STOP, car) == 84)
+        return (84);
     /*while (1) {
         if (count == 1) {
             if (write(1, "START_SIMULATION\n", 18) < 0) {
