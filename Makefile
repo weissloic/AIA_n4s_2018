@@ -17,7 +17,7 @@ CC		:= gcc
 NAME		:= ai
 TEST_NAME	:= mysh_test
 
-FILES		:= main get_next_line
+FILES		:= main get_next_line my_str_to_wordtab send_command
 FILES_TEST	:=  get_next_line
 
 SRC_NAMES	:= $(addsuffix .c, $(FILES))

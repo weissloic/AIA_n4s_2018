@@ -5,7 +5,7 @@
 ** get_next_line.c
 */
 
-#include "bootstrap.h"
+#include "my.h"
 
 int my_str_len(char *str)
 {

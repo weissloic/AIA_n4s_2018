@@ -2,111 +2,137 @@
 ** EPITECH PROJECT, 2018
 ** my.h
 ** File description:
-** my h
+** my.h for lib
 */
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <dirent.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <sys/sysmacros.h>
-#include <string.h>
-#include <errno.h>
-#include <signal.h>
 
 #ifndef MY_H_
 #define MY_H_
-#define READ_SIZE 80
+#define _GNU_SOURCE
+#include <string.h>
+#include <signal.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdarg.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#ifndef READ_SIZE
+#define READ_SIZE (128)
+#define TRUE (1)
+#define FALSE (0)
+#endif
 
-typedef struct global_t {
-    int pid_glob;
-    int var_x;
-    int var_y;
-    int counter;
-    int loop;
-    int connect_or_not;
-}global_t;
+typedef struct s_tab {
+    int pos;
+    char c;
+} tab_t;
 
-extern global_t *game;
+// String
 
-typedef struct navy {
-    char **boats;
-    char **create_map;
-    char **create_empty_map;
-    int vertical;
-    int horizontal;
-    int **value_one;
-    int **value_two;
-    int x;
-    int y;
-    int turn;
-    int ac;
-} navy_t;
-
-void my_putchar(char c);
-int my_isneg(int nb);
-int my_put_nbr(int nb);
-void my_swap(int *a, int *b);
-int my_putstr(char const *str);
-int my_strlen(char const *str);
-int my_getnbr(char const *str);
-void my_sort_in_array(int *tab, int size);
-int my_compute_power_rec(int nb, int power);
-int my_compute_square_root(int nb);
-int my_is_prime(int nb);
-int my_find_prime_sup(int nb);
-char *my_strcpy(char *dest, char const *src);
-char *my_strncpy(char *dest, char const *src, int n);
-char *my_revstr(char *str);
+void my_putchar(char);
+int my_putstr(char const *);
+void my_puterr(char *str);
+int my_strlen(char const *);
+char *my_strcpy(char *, char const *);
+char *my_strncpy(char *, char const *, int);
+char *my_revstr(char *);
+int my_strstr(char *, char const *);
+int my_strcmp(char const *, char const *);
+int my_strncmp(char const *, char const *, int);
+char *my_strupcase(char *);
+char *my_strlowcase(char *);
+char *my_strcapitalize(char *);
+int my_str_isalpha(char const *);
+int my_str_isnum(char const *);
+int my_str_islower(char const *);
+int my_str_isupper(char const *);
+int my_str_isprintable(char const *);
+int my_showstr(char const *);
+int my_showmem(char const *, int);
+char *my_strcat(char *, char const *);
+char *my_strncat(char *, char const *, int);
+int my_show_word_array(char *const *);
+char **my_str_to_wordtab(char *str, char c);
+char *my_strdup(char const *);
+int my_contains(char *str, char c);
+char *my_memset(void *tab, int value, int size);
+void my_memsetdouble(double *, int value , int size);
 char *get_next_line(int fd);
-static int find_retline(char *str, int first, int size);
-static char *manage_str(char *str1, char *str2, int *line);
-static int nb_alloc(char *str1, char *str2, int cpy);
-char *str_concat(char *str1, char *str2, int start_cpy, int stop_cpy);
-char *my_strstr(char *str, char const *to_find);
-int my_strcmp(char const *s1, char const *s2);
-int my_strncmp(char const *s1, char const *s2, int n);
-char *my_strupcase(char *str);
-char *my_strlowcase(char *str);
-char *my_strcapitalize(char *str);
-int my_str_isalpha(char const *str);
-int my_str_islower(char const *str);
-int my_str_isupper(char const *str);
-int my_str_isprintable(char const *str);
-int my_showstr(char const *str);
-int my_showmem(char const *str, int size);
-char *my_strcat(char *dest, char const *src);
-char *my_strncat(char *dest, char const *src, int nb);
-int my_printf(char *s, ...);
-void display_int(va_list ap);
-void display_string(va_list ap);
-void display_char(va_list ap);
-void display_pointer(va_list ap);
-int convert_tobase(int nbr, char *base);
-void convert_to_bin(va_list ap);
-void convert_to_octo(va_list ap);
-void convert_to_hexa(va_list ap);
-void convert_to_mhexa(va_list ap);
-void display_unsigned(va_list ap);
-long my_put_long_nbr(long nb);
-unsigned int my_put_unsigned_nbr(unsigned int nb);
-int my_put_unsigned_str(char const *str);
-void display_unprintable(va_list ap);
-void display_percentage();
+char *my_itc(int nbr);
+char *isneg(char *str, int *operator);
+char *convert_base(char *nbr, char *base_from, char *base_to);
 
-static void (*ptr1[9])(va_list) = {
-    &display_int,
-    &display_int,
-    &convert_to_octo,
-    &convert_to_hexa,
-    &convert_to_mhexa,
-    &display_char,
-    &display_string,
-    &convert_to_bin,
-    &display_percentage,
-};
+// NUMBER
+int number_digits(int nbr);
+int my_isneg(int);
+void my_swap(int *, int *);
+int my_getnbr(char const *);
+int	my_getnbr_base(char *str, char *base);
+void my_sort_int_array(int *, int);
+int my_compute_power_rec(int, int);
+int my_compute_square_root(int);
+int my_is_prime(int);
+int my_find_prime_sup(int);
+int my_put_nbr(int);
+int my_putnbr_base(int, char *);
+long my_putnbr_baselong(long, char *);
+void my_put_float(double, int);
+int my_put_nbru(unsigned int);
+
+// OTHER
+
+int find_str(char *str, char *to_find);
+int overflow(char const *str);
+int calc_rendu(int incr, int lenght, char const *str);
+int my_power_it(int nb, int power);
+int my_strlen2(char const *str);
+void print_nbr(void);
+int *check(int i, int *array);
+int word_count_hand(char *str);
+int is_numoralpha(char c);
+int alpha(char const *, int);
+int alpha2(char const *, int);
+int alpha3(char const *, int);
+int check1(char s1, char s2);
+int my_is_prime_sup(int nb);
+int my_length(char *str);
+
+// MALLOC
+
+char **my_malloc2d(int lines, int cols);
+char *my_malloc(int size);
+int **my_malloc2d_int(int lines, int cols);
+short **my_malloc2d_short(int, int);
+
+//FREE
+
+void my_free2d(char **buffer);
+void my_free2d_short(short **buffer, int cols);
+
+
+// PRINTF
+
+int (*ptr_fct[18])(va_list);
+int my_printf(char *, ...);
+
+
+// DISPLAY
+
+int my_putchar_printf(va_list);
+int my_put_percent(va_list);
+int my_put_pointer(va_list);
+int my_putstr_printf(va_list);
+int my_putstr_printable(va_list);
+
+int my_put_nbr_bin(va_list);
+int my_put_octal(va_list);
+int put_nothing(va_list);
+int my_put_nbr_printf(va_list);
+int my_put_nbr_hexmin(va_list);
+int my_put_nbr_hexmaj(va_list);
+int float_precision(va_list, int);
+int my_put_nbr_unsigned(va_list);
+int my_put_nbr_float(va_list);
+
 #endif
