@@ -55,32 +55,43 @@ void choose_direction(char **tab, car_t *car)
     int angle = 0;
     int way = 50;
     for (int i = 3; tab[i + 1] != NULL; i++) {
-        if (atof(tab[i]) <= 500 && atof(tab[i]) < max) {
-            if (atof(tab[i]) <= 100) {
-                angle = 0;
+        if (atof(tab[i]) <= 600 && atof(tab[i]) < max) {
+            if (atof(tab[i]) <= 400) {
+                angle = 1;
             }
             max = atof(tab[i]);
             way = i;
         }
     }
-    fprintf(stderr, "%d\n", way);
     if (way < 8 && angle == 0) {
-        send_command("WHEELS_DIR:-0.15\n", car);
+        send_command("WHEELS_DIR:-1\n", car);
+        for (int i = 0; i != 100; i++);
+        send_command("WHEELS_DIR:0\n", car);
     }
     if (way < 8 && angle == 1) {
-        send_command("WHEELS_DIR:-0.15\n", car);
+        fprintf(stderr, "ok");
+        send_command("WHEELS_DIR:-0.2\n", car);
     }
-    if (way >= 9 && way <= 22 && angle == 0)
+    if (way >= 9 && way <= 22 && angle == 0) {
+        send_command("WHEELS_DIR:1\n", car);
+        for (int i = 0; i != 1000; i++);
         send_command("WHEELS_DIR:0\n", car);
-    if (way >= 9 && way <= 22 && angle == 1)
+    }
+    if (way >= 9 && way <= 22 && angle == 1) {
+        send_command("WHEELS_DIR:1\n", car);
+        for (int i = 0; i != 1000; i++);
         send_command("WHEELS_DIR:0\n", car);
+    }
     if (way > 23 && angle == 0) {
-        send_command("WHEELS_DIR:0.15\n", car);
+        send_command("WHEELS_DIR:1\n", car);
+        for (int i = 0; i != 1000; i++);
+        send_command("WHEELS_DIR:0\n", car);
     }
     if (way > 23 && angle == 1) {
-        send_command("WHEELS_DIR:0.15\n", car);
+        send_command("WHEELS_DIR:0.2\n", car);
+        fprintf(stderr, "ok");
     }
-    if (way == 50) {
+    if (way == 70) {
         send_command("WHEELS_DIR:0.0\n", car);
     }
 }
@@ -95,7 +106,7 @@ int main(void)
         return (84);
     while (compare_response(car, "Track Cleared") == 1) {
         send_info(car);
-        send_command("CAR_FORWARD:0.5\n", car);
+        send_command("CAR_FORWARD:0.55\n", car);
         check = check_lidar(car);
         choose_direction(check, car);
     }
