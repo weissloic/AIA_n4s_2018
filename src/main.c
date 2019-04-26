@@ -52,22 +52,34 @@ char **check_lidar(car_t *car)
 void choose_direction(char **tab, car_t *car)
 {
     int max = 3000;
+    int angle = 0;
     int way = 16;
     for (int i = 3; tab[i + 1] != NULL; i++) {
-        if (atof(tab[i]) <= 900 && atof(tab[i]) < max) {
-            max = atof(tab[i]);
+        if (atoi(tab[i]) <= 400 && atoi(tab[i]) < max) {
+            if (atoi(tab[i]) <= 200) {
+                angle = 0;
+            }
+            max = atoi(tab[i]);
             way = i;
         }
+        fprintf(stderr, "%s ", tab[i]);
     }
-    fprintf(stderr, "%s\n", tab[way]);
-    fprintf(stderr, "%.2f\n", atof(tab[way]));
-    if (way < 8) {
-        send_command("WHEELS_DIR:-0.15\n", car);
+    fprintf(stderr, "\n");
+    if (way < 5 && angle == 0) {
+        send_command("WHEELS_DIR:-0.10\n", car);
     }
-    if (way >= 9 && way <= 20)
+    if (way < 5 && angle == 1) {
+        send_command("WHEELS_DIR:-0.25\n", car);
+    }
+    if (way >= 6 && way <= 26 && angle == 0)
         send_command("WHEELS_DIR:0\n", car);
-    if (way > 21) {
-        send_command("WHEELS_DIR:0.15\n", car);
+    if (way >= 6 && way <= 26 && angle == 1)
+        send_command("WHEELS_DIR:0\n", car);
+    if (way > 27 && angle == 0) {
+        send_command("WHEELS_DIR:0.10\n", car);
+    }
+    if (way > 27 && angle == 1) {
+        send_command("WHEELS_DIR:0.25\n", car);
     }
 }
 
@@ -81,7 +93,7 @@ int main(void)
         return (84);
     while (compare_response(car, "Track Cleared") == 1) {
         send_info(car);
-        send_command("CAR_FORWARD:0.5\n", car);
+        send_command("CAR_FORWARD:0.8\n", car);
         check = check_lidar(car);
         choose_direction(check, car);
     }
