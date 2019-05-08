@@ -89,9 +89,10 @@ void choose_speed(char *tab, car_t *car)
 {
     float value = atof(tab);
 
-    //if (value >= 2000)
-    send_command("CAR_FORWARD:1\n", car);
-    if (value < 2000) {
+    if (value >= 3000)
+    fprintf(stderr, "eeeeee");
+        send_command("CAR_FORWARD:0.2\n", car);
+    if (value < 3000) {
         fprintf(stderr, "sssssss");
         send_command("CAR_FORWARD:0\n", car);
     }
@@ -108,7 +109,6 @@ int main(void)
 {
     car_t *car = malloc(sizeof(car_t));
     char **check;
-    int value;
     if (send_command(START, car) == 84)
         return (84);
     if (send_info(car) == 84)
@@ -116,11 +116,28 @@ int main(void)
     while (compare_response(car, "Track Cleared") == 1) {
         send_info(car);
         check = check_lidar(car);
-        choose_speed(check[17], car);
-        //choose_direction(check, car);
+        float value = (atof(check[16]) + atof(check[17]) + atof(check[18])) / 3;
+        fprintf(stderr, "%.2f\n", value);
+        if (value >= 2900)
+            send_command("CAR_FORWARD:1\n", car);
+        if (value < 2900) {
+            fprintf(stderr, "sssssss");
+            send_command("CAR_FORWARD:0\n", car);
+        }
     }
     fprintf(stderr, "Track Cleared\n");
     if (send_command(STOP, car) == 84)
         return (84);
     return (0);
 }
+
+/*    float value = atof(tab[16]) + atof(tab[17]) + atof(tab[18]) / 3;
+
+    fprintf(stderr, "%.2f\n", value);
+    if (value >= 10000)
+    fprintf(stderr, "eeeeee\n");
+        send_command("CAR_FORWARD:1\n", car);
+    if (value < 10000) {
+        fprintf(stderr, "sssssss\n");
+        send_command("CAR_FORWARD:0\n", car);
+    }*/
