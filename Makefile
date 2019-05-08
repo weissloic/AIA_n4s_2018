@@ -21,7 +21,7 @@ FILES		:= main get_next_line my_str_to_wordtab send_command
 FILES_TEST	:=  get_next_line
 
 SRC_NAMES	:= $(addsuffix .c, $(FILES))
-SRC		:= $(addprefix src/, $(SRC_NAMES))
+SRC		:= $(wildcard src/*.c)
 
 CINC		:= -I include/
 CFLAGS		:= -g -pedantic -Wall -Wextra -std=c99

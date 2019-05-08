@@ -30,7 +30,7 @@ char *get_next_line(int fd);
 int send_command(char *str, car_t *car);
 int send_info(car_t *car);
 int check_response(char *buffer, car_t *car);
-void choose_direction(char **tab, car_t *car);
+void choose_direction(char **check, car_t *car);
 char **check_lidar(car_t *car);
  
 #endif /* !BOOTSTRAP_H_ */
