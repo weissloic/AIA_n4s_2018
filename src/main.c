@@ -118,6 +118,10 @@ int main(void)
         check = check_lidar(car);
         float value = (atof(check[16]) + atof(check[17]) + atof(check[18])) / 3;
         fprintf(stderr, "%.2f\n", value);
+        for (int i = 0; check[i]; i++)
+            free(check[i]);
+        free(check);
+        free(car->salut);
         if (value >= 2900)
             send_command("CAR_FORWARD:1\n", car);
         if (value < 2900) {
