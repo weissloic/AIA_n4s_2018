@@ -67,10 +67,10 @@ void choose_direction(char **check, car_t *car)
 
     fprintf(stderr, "%f\n", value);
     if (value < 0) {
-        if (send_command("WHEELS_DIR:-0.2\n", car) == 84)
+        if (send_command("WHEELS_DIR:-0.22\n", car) == 84)
             return;
     } else {
-        if (send_command("WHEELS_DIR:0.2\n", car) == 84)
+        if (send_command("WHEELS_DIR:0.22\n", car) == 84)
             return;
     }
 
@@ -106,8 +106,10 @@ void choose_speed(int value, car_t *car)
 {
     if (value >= 2000)
         send_command("CAR_FORWARD:1\n", car);
-    if (value < 1500)
-        send_command("CAR_FORWARD:0.4\n", car);
+    if (value < 1700)
+        send_command("CAR_FORWARD:0.45\n", car);
+    if (value < 1000)
+        send_command("CAR_FORWARD:0.25\n", car);
 }
 
 int main(void)
