@@ -15,11 +15,23 @@
 // Track Cleared a la fin = FIN DE LA COURSE CIAO
 // LES NOMBRES = distance entre les murs et la voiture
 
+int len_tab(char **tab)
+{
+    int i = 0;
+
+    while (tab[i])
+        i++;
+    fprintf(stderr, "%d\n", i);
+    return (i);
+}
+
 int check_response(char *buffer, car_t *car)
 {
     if (buffer == NULL)
         return (0);
     car->response = my_str_to_wordtab(buffer, ':');
+    if (len_tab(car->response) < 2)
+        return (84);
     if (strcmp(car->response[1], "OK") != 0) {
         return (0);
     }
@@ -53,13 +65,9 @@ char **check_lidar(car_t *car)
 
 void choose_direction(char **check, car_t *car)
 {
-    fprintf(stderr, "ok\n");
-    //fprintf(stderr, "%s\n", check[17]);
-    //fprintf(stderr, "check3 = %s\n", check[3]);
-    //fprintf(stderr, "check34 = %s\n", check[34]);
     float value = atof(check[4]) - atof(check[33]);
-    fprintf(stderr, "%f\n", value);
 
+    fprintf(stderr, "%f\n", value);
     if (value < 0) {
         if (send_command("WHEELS_DIR:-0.2\n", car) == 84)
             return;
@@ -67,7 +75,7 @@ void choose_direction(char **check, car_t *car)
         if (send_command("WHEELS_DIR:0.2\n", car) == 84)
             return;
     }
-    
+
     /*if (atof(check[17]) >= 1500) {
         if (value < 0) {
             send_command("WHEELS_DIR:-0.15\n", car);
