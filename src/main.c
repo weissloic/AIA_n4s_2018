@@ -51,14 +51,12 @@ int compare_response(car_t *car, char *response)
 
 char **check_lidar(car_t *car)
 {
-    int i = 0;
     char **check = NULL;
 
     send_command("GET_INFO_LIDAR\n", car);
-    while (car->salut[i - 2] != 'f' || car->salut[i - 1] != 'a' || car->salut[i] != 'r') {
-        i++;
-    }
     check = my_str_to_wordtab(car->salut, ':');
+    if (len_tab(check) < 2)
+        return (NULL);
     free(car->salut);
     return (check);
 }
@@ -124,6 +122,8 @@ int main(void)
     while (compare_response(car, "Track Cleared") == 1) {
         send_info(car);
         check = check_lidar(car);
+        if (check == NULL)
+            return (84);
         float value = atof(check[20]);
         choose_speed(value, car);
         if (value < 1000)
