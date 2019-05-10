@@ -40,7 +40,8 @@ int compare_response(car_t *car, char *response)
 char **check_lidar(car_t *car)
 {
     int i = 0;
-    char **check;
+    char **check = NULL;
+
     send_command("GET_INFO_LIDAR\n", car);
     while (car->salut[i - 2] != 'f' || car->salut[i - 1] != 'a' || car->salut[i] != 'r') {
         i++;
@@ -52,52 +53,62 @@ char **check_lidar(car_t *car)
 
 void choose_direction(char **check, car_t *car)
 {
+    fprintf(stderr, "ok\n");
     //fprintf(stderr, "%s\n", check[17]);
     //fprintf(stderr, "check3 = %s\n", check[3]);
     //fprintf(stderr, "check34 = %s\n", check[34]);
-    int value = atof(check[4]) - atof(check[33]);
-    if (atof(check[17]) >= 1500) {
+    float value = atof(check[4]) - atof(check[33]);
+    fprintf(stderr, "%f\n", value);
+
+    if (value < 0) {
+        if (send_command("WHEELS_DIR:-0.2\n", car) == 84)
+            return;
+    } else {
+        if (send_command("WHEELS_DIR:0.2\n", car) == 84)
+            return;
+    }
+    
+    /*if (atof(check[17]) >= 1500) {
         if (value < 0) {
-            send_command("WHEELS_DIR:-0.15", car);
+            send_command("WHEELS_DIR:-0.15\n", car);
         } else {
-            send_command("WHEELS_DIR:0.15", car);
+            send_command("WHEELS_DIR:0.15\n", car);
         }
     } else if (atof(check[17]) >= 1000) {
         if (value < 0) {
-            send_command("WHEELS_DIR:-0.5", car);
+            send_command("WHEELS_DIR:-0.5\n", car);
         } else {
-            send_command("WHEELS_DIR:0.5", car);
+            send_command("WHEELS_DIR:0.5\n", car);
         }
     } else if (atof(check[17]) >= 600) {
-        //fprintf(stderr, "600");
         if (value < 0) {
-            send_command("WHEELS_DIR:-1.5", car);
+            send_command("WHEELS_DIR:-1.5\n", car);
         } else {
-            send_command("WHEELS_DIR:1.5", car);
+            send_command("WHEELS_DIR:1.5\n", car);
         }
     } else if (atof(check[17]) >= 400) {
         //fprintf(stderr, "400");
         if (value < 0) {
-            send_command("WHEELS_DIR:-1.5", car);
+            send_command("WHEELS_DIR:-1.5\n", car);
         } else {
-            send_command("WHEELS_DIR:1.5", car);
+            send_command("WHEELS_DIR:1.5\n", car);
         }
-    }
+    }*/
 }
 
 void choose_speed(int value, car_t *car)
 {
     if (value >= 2000)
         send_command("CAR_FORWARD:1\n", car);
-    else if (value < 2000) {
-        send_command("CAR_FORWARD:0\n", car);
-    }
+    if (value < 1500)
+        send_command("CAR_FORWARD:0.4\n", car);
 }
 
 int main(void)
 {
     car_t *car = malloc(sizeof(car_t));
-    char **check;
+    char **check = NULL;
+
     if (send_command(START, car) == 84)
         return (84);
     if (send_info(car) == 84)
@@ -106,42 +117,18 @@ int main(void)
         send_info(car);
         check = check_lidar(car);
         float value = atof(check[20]);
-        //fprintf(stderr, "%.2f\n", value);
         choose_speed(value, car);
-        if (atof(check[17]) >= 1500) {
-            if (value < 0) {
-                //send_command("WHEELS_DIR:-0.7", car);
-            } else {
-                //send_command("WHEELS_DIR:0.7", car);
-            }
-        }/* else if (atof(check[17]) >= 1000) {
-            if (value < 0) {
-                send_command("WHEELS_DIR:-0.5", car);
-            } else {
-                send_command("WHEELS_DIR:0.5", car);
-            }
-        } else if (atof(check[17]) >= 600) {
-            //fprintf(stderr, "600");
-            if (value < 0) {
-                send_command("WHEELS_DIR:-0.7", car);
-            } else {
-                send_command("WHEELS_DIR:0.7", car);
-            }
-        } else if (atof(check[17]) >= 400) {
-            //fprintf(stderr, "400");
-            if (value < 0) {
-                send_command("WHEELS_DIR:-0.7", car);
-            } else {
-                send_command("WHEELS_DIR:0.7", car);
-            }
-        }*/
-        fprintf(stderr, "salut");
+        if (value < 1000)
+            choose_direction(check, car);
+        else {
+            if (send_command("WHEELS_DIR:0\n", car) == 84)
+                return (84);
+        }
         for (int i = 0; check[i]; i++) {
             free(check[i]);
         }
-        car->salut = NULL;
         free(check);
-        //free(car->salut);
+        car->salut = NULL;
     }
     fprintf(stderr, "Track Cleared\n");
     if (send_command(STOP, car) == 84)
