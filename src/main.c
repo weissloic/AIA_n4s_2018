@@ -21,7 +21,6 @@ int len_tab(char **tab)
 
     while (tab[i])
         i++;
-    fprintf(stderr, "%d\n", i);
     return (i);
 }
 
@@ -65,14 +64,18 @@ void choose_direction(char **check, car_t *car)
 {
     float value = atof(check[4]) - atof(check[33]);
 
-    fprintf(stderr, "%f\n", value);
     if (value < 0) {
         if (send_command("WHEELS_DIR:-0.22\n", car) == 84)
+            return;
+    } else if (atof(check[13]) < 800 || atof(check[17]) < 800 || atof(check[22]) < 800) {
+        fprintf(stderr, "ssss");
+        if (send_command("WHEELS_DIR:0.5\n", car) == 84)
             return;
     } else {
         if (send_command("WHEELS_DIR:0.22\n", car) == 84)
             return;
     }
+
 
     /*if (atof(check[17]) >= 1500) {
         if (value < 0) {
@@ -139,6 +142,7 @@ int main(void)
         }
         free(check);
         car->salut = NULL;
+        free(car->salut);
     }
     fprintf(stderr, "Track Cleared\n");
     if (send_command(STOP, car) == 84)
