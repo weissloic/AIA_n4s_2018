@@ -28,6 +28,7 @@ int send_command(char *str, car_t *car)
     if (write(1, str, strlen(str)) < 0)
         return (84);
     response = get_next_line(0);
+    fprintf(stderr, "%s\n\n", response);
     if (check_response(response, car) == 0)
         return (84);
     return (0);
