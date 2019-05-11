@@ -62,57 +62,66 @@ char **check_lidar(car_t *car)
 
 void choose_direction(char **check, car_t *car)
 {
-    float value = atof(check[4]) - atof(check[33]);
+    float value = atof(check[3]) - atof(check[33]);
+    int i = 20;
 
-    if (value < 0) {
-        if (send_command("WHEELS_DIR:-0.22\n", car) == 84)
-            return;
-    } else if (atof(check[13]) < 800 || atof(check[17]) < 800 || atof(check[22]) < 800) {
-        fprintf(stderr, "ssss");
-        if (send_command("WHEELS_DIR:0.5\n", car) == 84)
-            return;
-    } else {
-        if (send_command("WHEELS_DIR:0.22\n", car) == 84)
-            return;
-    }
+    fprintf(stderr, "float is %f\n", value);
 
-
-    /*if (atof(check[17]) >= 1500) {
+    if (atof(check[i]) >= 1500) {
+        if (value < 0) {
+            send_command("WHEELS_DIR:-0.0055\n", car);
+        } else {
+            send_command("WHEELS_DIR:0.0055\n", car);
+        }
+    } else if (atof(check[i]) >= 1000) {
+        if (value < 0) {
+            send_command("WHEELS_DIR:-0.055\n", car);
+        } else {
+            send_command("WHEELS_DIR:0.055\n", car);
+        }
+    } else if (atof(check[i]) >= 600) {
         if (value < 0) {
             send_command("WHEELS_DIR:-0.15\n", car);
         } else {
             send_command("WHEELS_DIR:0.15\n", car);
         }
-    } else if (atof(check[17]) >= 1000) {
-        if (value < 0) {
-            send_command("WHEELS_DIR:-0.5\n", car);
-        } else {
-            send_command("WHEELS_DIR:0.5\n", car);
-        }
-    } else if (atof(check[17]) >= 600) {
-        if (value < 0) {
-            send_command("WHEELS_DIR:-1.5\n", car);
-        } else {
-            send_command("WHEELS_DIR:1.5\n", car);
-        }
-    } else if (atof(check[17]) >= 400) {
+    } else if (atof(check[i]) >= 400) {
         //fprintf(stderr, "400");
         if (value < 0) {
-            send_command("WHEELS_DIR:-1.5\n", car);
+            send_command("WHEELS_DIR:-0.25\n", car);
         } else {
-            send_command("WHEELS_DIR:1.5\n", car);
+            send_command("WHEELS_DIR:0.25\n", car);
         }
-    }*/
+    } else if ((atof(check[i]) >= 200))
+        if (value < 0) {
+            send_command("WHEELS_DIR:-0.35\n", car);
+        } else {
+            send_command("WHEELS_DIR:0.35\n", car);
+        }
+        else {
+            if (value < 0) {
+            send_command("WHEELS_DIR:-0.85\n", car);
+        } else {
+            send_command("WHEELS_DIR:0.85\n", car);
+        }
+    
+        }
 }
 
 void choose_speed(int value, car_t *car)
 {
     if (value >= 2000)
-        send_command("CAR_FORWARD:1\n", car);
-    if (value < 1700)
-        send_command("CAR_FORWARD:0.45\n", car);
-    if (value < 1000)
+        send_command("CAR_FORWARD:0.9\n", car);
+    else if (value >= 1500)
+        send_command("CAR_FORWARD:0.6\n", car);
+    else if (value >= 1000)
+        send_command("CAR_FORWARD:0.33\n", car);
+    else if (value >= 600)
         send_command("CAR_FORWARD:0.25\n", car);
+    else if (value >= 400)
+        send_command("CAR_FORWARD:0.06\n", car);
+    else
+        send_command("CAR_FORWARD:0.02\n", car);
 }
 
 int main(void)
