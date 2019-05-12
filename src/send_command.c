@@ -10,12 +10,12 @@
 
 int send_info(car_t *car)
 {
-    car->salut = NULL;
+    car->check_str = NULL;
 
     if (write(1, INFO, strlen(INFO)) < 0)
         return (84);
-    car->salut = get_next_line(0);
-    if (check_response(car->salut, car) == 0)
+    car->check_str = get_next_line(0);
+    if (check_response(car->check_str, car) == 0)
         return (84);
     return (0);
 }
@@ -27,7 +27,6 @@ int send_command(char *str, car_t *car)
     if (write(1, str, strlen(str)) < 0)
         return (84);
     response = get_next_line(0);
-    //fprintf(stderr, "%s\n\n", response);
     if (check_response(response, car) == 0)
         return (84);
     return (0);

@@ -21,7 +21,7 @@ typedef struct s_car {
     float speed;
     float wheels_dir;
     char **response;
-    char *salut;
+    char *check_str;
 } car_t;
 
 char *get_next_line(int fd);
@@ -32,5 +32,6 @@ int send_info(car_t *car);
 int check_response(char *buffer, car_t *car);
 void choose_direction(char **check, car_t *car);
 char **check_lidar(car_t *car);
+int game_loop(char **check, car_t *car);
  
 #endif /* !BOOTSTRAP_H_ */

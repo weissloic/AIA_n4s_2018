@@ -17,7 +17,7 @@ CC		:= gcc
 NAME		:= ai
 TEST_NAME	:= mysh_test
 
-FILES		:= main get_next_line my_str_to_wordtab send_command
+FILES		:= main get_next_line my_str_to_wordtab send_command speed_dir
 FILES_TEST	:=  get_next_line
 
 SRC_NAMES	:= $(addsuffix .c, $(FILES))
@@ -47,6 +47,7 @@ $(NAME):	$(OBJ)
 	@echo "$(PREFIX) $(GOLD)Compiling...$(WHITE)\r"
 	@gcc $(OBJ) -o $(NAME) $(CFLAGS) $(CINC)
 	@echo "$(PREFIX) $(GOLD)Compiled !$(WHITE)"
+
 
 clean:
 	@echo "$(PREFIX) $(RED)Delete $(GOLD)$(PWD_PATH)/obj/*.o$(WHITE)"
