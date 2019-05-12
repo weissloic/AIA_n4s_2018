@@ -63,49 +63,31 @@ char **check_lidar(car_t *car)
 void choose_direction(char **check, car_t *car)
 {
     float value = atof(check[3]) - atof(check[33]);
-    int i = 20;
+    int b;
+    switch (atoi(check[18]) >= b) {
+        case (1500):
+            fprintf(stderr, "djhzqjhzdqjé");
+            break;
+    }
 
-    fprintf(stderr, "float is %f\n", value);
-
-    if (atof(check[i]) >= 1500) {
-        if (value < 0) {
-            send_command("WHEELS_DIR:-0.0055\n", car);
-        } else {
-            send_command("WHEELS_DIR:0.0055\n", car);
-        }
-    } else if (atof(check[i]) >= 1000) {
-        if (value < 0) {
-            send_command("WHEELS_DIR:-0.055\n", car);
-        } else {
-            send_command("WHEELS_DIR:0.055\n", car);
-        }
-    } else if (atof(check[i]) >= 600) {
-        if (value < 0) {
-            send_command("WHEELS_DIR:-0.15\n", car);
-        } else {
-            send_command("WHEELS_DIR:0.15\n", car);
-        }
-    } else if (atof(check[i]) >= 400) {
-        //fprintf(stderr, "400");
-        if (value < 0) {
-            send_command("WHEELS_DIR:-0.25\n", car);
-        } else {
-            send_command("WHEELS_DIR:0.25\n", car);
-        }
-    } else if ((atof(check[i]) >= 200))
-        if (value < 0) {
-            send_command("WHEELS_DIR:-0.35\n", car);
-        } else {
-            send_command("WHEELS_DIR:0.35\n", car);
-        }
-        else {
-            if (value < 0) {
-            send_command("WHEELS_DIR:-0.85\n", car);
-        } else {
-            send_command("WHEELS_DIR:0.85\n", car);
-        }
-    
-        }
+    if (atof(check[18]) >= 1500)
+        value = ((value < 0) ? send_command("WHEELS_DIR:-0.0055\n", car) :
+        send_command("WHEELS_DIR:0.0055\n", car));
+    else if (atof(check[18]) >= 1000)
+        value = ((value < 0) ? send_command("WHEELS_DIR:-0.055\n", car) :
+        send_command("WHEELS_DIR:0.055\n", car));
+    else if (atof(check[18]) >= 600)
+        value = ((value < 0) ? send_command("WHEELS_DIR:-0.15\n", car) :
+        send_command("WHEELS_DIR:0.15\n", car));
+    else if (atof(check[18]) >= 400)
+        value = ((value < 0) ? send_command("WHEELS_DIR:-0.25\n", car) :
+        send_command("WHEELS_DIR:0.25\n", car));
+    else if ((atof(check[18]) >= 200))
+        value = ((value < 0) ? send_command("WHEELS_DIR:-0.35\n", car) :
+        send_command("WHEELS_DIR:0.35\n", car));
+    else
+        value = ((value < 0) ? send_command("WHEELS_DIR:-0.85\n", car) :
+        send_command("WHEELS_DIR:0.85\n", car));
 }
 
 void choose_speed(int value, car_t *car)
@@ -124,6 +106,23 @@ void choose_speed(int value, car_t *car)
         send_command("CAR_FORWARD:0.02\n", car);
 }
 
+int game_loop(char **check, car_t *car)
+{
+    send_info(car);
+    check = check_lidar(car);
+    if (check == NULL)
+        return (84);
+    float value = atof(check[18]);
+    choose_speed(value, car);
+    choose_direction(check, car);
+    for (int i = 0; check[i]; i++) {
+        free(check[i]);
+    }
+    free(check);
+    car->salut = NULL;
+    free(car->salut);
+}
+
 int main(void)
 {
     car_t *car = malloc(sizeof(car_t));
@@ -134,38 +133,11 @@ int main(void)
     if (send_info(car) == 84)
         return (84);
     while (compare_response(car, "Track Cleared") == 1) {
-        send_info(car);
-        check = check_lidar(car);
-        if (check == NULL)
-            return (84);
-        float value = atof(check[20]);
-        choose_speed(value, car);
-        if (value < 1000)
-            choose_direction(check, car);
-        else {
-            if (send_command("WHEELS_DIR:0\n", car) == 84)
-                return (84);
-        }
-        for (int i = 0; check[i]; i++) {
-            free(check[i]);
-        }
-        free(check);
-        car->salut = NULL;
-        free(car->salut);
+        if (game_loop(check, car) == 84)
+            return 84;
     }
     fprintf(stderr, "Track Cleared\n");
     if (send_command(STOP, car) == 84)
         return (84);
     return (0);
 }
-
-/*    float value = atof(tab[16]) + atof(tab[17]) + atof(tab[18]) / 3;
-
-    fprintf(stderr, "%.2f\n", value);
-    if (value >= 10000)
-    fprintf(stderr, "eeeeee\n");
-        send_command("CAR_FORWARD:1\n", car);
-    if (value < 10000) {
-        fprintf(stderr, "sssssss\n");
-        send_command("CAR_FORWARD:0\n", car);
-    }*/
